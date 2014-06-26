@@ -3,7 +3,7 @@ Spark Core compatible Dallas Temperature sensor library
 
 This library is a port of the original Arduino compatible Dallas Sensor library. Some includes have been fixed, but the libary is otherwise untouched.
 
-***Note:** This library depends on the OneWire library.*
+_**Note:** This library depends on the OneWire library._
 
 Original repository by Miles Burton: [Arduino-Temperature-Control-Library](https://github.com/milesburton/Arduino-Temperature-Control-Library).
   
