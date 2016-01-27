@@ -9,7 +9,7 @@
 
 // Modified by Tom de Boer @ 26-jun-2014 (Spark Core compatibility)
 
-#include "spark-dallas-temperature.h"
+#include <spark-dallas-temperature.h>
 
 DallasTemperature::DallasTemperature(OneWire* _oneWire)
 #if REQUIRESALARMS
