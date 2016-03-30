@@ -78,13 +78,13 @@ class DallasTemperature
 
   // returns the number of devices found on the bus
   uint8_t getDeviceCount(void);
-  
+
   // returns true if address is valid
   bool validAddress(const uint8_t*);
 
-  // finds an address at a given index on the bus 
+  // finds an address at a given index on the bus
   bool getAddress(uint8_t*, uint8_t);
-  
+
   // attempt to determine if the device at the given address is connected to the bus
   bool isConnected(const uint8_t*);
 
@@ -103,7 +103,7 @@ class DallasTemperature
 
   // get global resolution
   uint8_t getResolution();
-  
+
   // set global resolution to 9, 10, 11, or 12 bits
   void setResolution(uint8_t);
 
@@ -112,18 +112,18 @@ class DallasTemperature
 
   // set resolution of a device to 9, 10, 11, or 12 bits
   bool setResolution(const uint8_t*, uint8_t);
-  
+
   // sets/gets the waitForConversion flag
   void setWaitForConversion(bool);
   bool getWaitForConversion(void);
-  
+
   // sets/gets the checkForConversion flag
   void setCheckForConversion(bool);
   bool getCheckForConversion(void);
-  
-  // sends command for all devices on the bus to perform a temperature conversion 
+
+  // sends command for all devices on the bus to perform a temperature conversion
   void requestTemperatures(void);
-   
+
   // sends command for one device to perform a temperature conversion by address
   bool requestTemperaturesByAddress(const uint8_t*);
 
@@ -141,35 +141,35 @@ class DallasTemperature
 
   // Get temperature for device index (slow)
   float getTempCByIndex(uint8_t);
-  
+
   // Get temperature for device index (slow)
   float getTempFByIndex(uint8_t);
-  
+
   // returns true if the bus requires parasite power
   bool isParasitePowerMode(void);
-  
+
   bool isConversionAvailable(const uint8_t*);
 
   #if REQUIRESALARMS
-  
+
   typedef void AlarmHandler(const uint8_t*);
 
   // sets the high alarm temperature for a device
   // accepts a char.  valid range is -55C - 125C
-  void setHighAlarmTemp(const uint8_t*, char);
+  void setHighAlarmTemp(const uint8_t*, int8_t);
 
   // sets the low alarm temperature for a device
   // accepts a char.  valid range is -55C - 125C
-  void setLowAlarmTemp(const uint8_t*, char);
+  void setLowAlarmTemp(const uint8_t*, int8_t);
 
   // returns a signed char with the current high alarm temperature for a device
   // in the range -55C - 125C
-  char getHighAlarmTemp(const uint8_t*);
+  int8_t getHighAlarmTemp(const uint8_t*);
 
   // returns a signed char with the current low alarm temperature for a device
   // in the range -55C - 125C
-  char getLowAlarmTemp(const uint8_t*);
-  
+  int8_t getLowAlarmTemp(const uint8_t*);
+
   // resets internal variables used for the alarm search
   void resetAlarmSearch(void);
 
@@ -184,10 +184,10 @@ class DallasTemperature
 
   // runs the alarm handler for all devices returned by alarmSearch()
   void processAlarms(void);
-  
+
   // sets the alarm handler
   void setAlarmHandler(const AlarmHandler *);
-  
+
   // The default alarm handler
   static void defaultAlarmHandler(const uint8_t*);
 
@@ -212,41 +212,41 @@ class DallasTemperature
 
   // delete memory reference
   void operator delete(void*);
-  
+
   #endif
 
   private:
   typedef uint8_t ScratchPad[9];
-  
+
   // parasite power on or off
   bool parasite;
 
   // used to determine the delay amount needed to allow for the
   // temperature conversion to take place
   uint8_t bitResolution;
-  
+
   // used to requestTemperature with or without delay
   bool waitForConversion;
-  
+
   // used to requestTemperature to dynamically check if a conversion is complete
   bool checkForConversion;
-  
+
   // count of devices on the bus
   uint8_t devices;
-  
+
   // Take a pointer to one wire instance
   OneWire* _wire;
 
   // reads scratchpad and returns the raw temperature
   int16_t calculateTemperature(const uint8_t*, uint8_t*);
-  
+
   int16_t millisToWaitForConversion(uint8_t);
 
   void  blockTillConversionComplete(uint8_t, const uint8_t*);
-  
+
   #if REQUIRESALARMS
 
-  // required for alarmSearch 
+  // required for alarmSearch
   uint8_t alarmSearchAddress[8];
   char alarmSearchJunction;
   uint8_t alarmSearchExhausted;
@@ -254,7 +254,12 @@ class DallasTemperature
   // the alarm handler function pointer
   AlarmHandler *_AlarmHandler;
 
+  // Converts signed byte to dallas 7-bit number and MSB for sign
+  uint8_t convertToAlarmTemp(int8_t celsius);
+  // Converts allas 7-bit number and MSB for sign to signed byte
+  int8_t convertFromAlarmTemp(uint8_t celsius);
+
   #endif
-  
+
 };
 #endif

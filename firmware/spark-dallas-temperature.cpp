@@ -508,16 +508,18 @@ the next temperature conversion.
 // sets the high alarm temperature for a device in degrees Celsius
 // accepts a float, but the alarm resolution will ignore anything
 // after a decimal point.  valid range is -55C - 125C
-void DallasTemperature::setHighAlarmTemp(const uint8_t* deviceAddress, char celsius)
+void DallasTemperature::setHighAlarmTemp(const uint8_t* deviceAddress, int8_t celsius)
 {
     // make sure the alarm temperature is within the device's range
     if (celsius > 125) celsius = 125;
     else if (celsius < -55) celsius = -55;
 
+    uint8_t alTemp = convertToAlarmTemp(celsius);
+
     ScratchPad scratchPad;
     if (isConnected(deviceAddress, scratchPad))
     {
-        scratchPad[HIGH_ALARM_TEMP] = (uint8_t)celsius;
+        scratchPad[HIGH_ALARM_TEMP] = alTemp;
         writeScratchPad(deviceAddress, scratchPad);
     }
 }
@@ -525,35 +527,40 @@ void DallasTemperature::setHighAlarmTemp(const uint8_t* deviceAddress, char cels
 // sets the low alarm temperature for a device in degrees Celsius
 // accepts a float, but the alarm resolution will ignore anything
 // after a decimal point.  valid range is -55C - 125C
-void DallasTemperature::setLowAlarmTemp(const uint8_t* deviceAddress, char celsius)
+void DallasTemperature::setLowAlarmTemp(const uint8_t* deviceAddress, int8_t celsius)
 {
+
     // make sure the alarm temperature is within the device's range
     if (celsius > 125) celsius = 125;
     else if (celsius < -55) celsius = -55;
 
+    uint8_t alTemp = convertToAlarmTemp(celsius);
+
     ScratchPad scratchPad;
     if (isConnected(deviceAddress, scratchPad))
     {
-        scratchPad[LOW_ALARM_TEMP] = (uint8_t)celsius;
+        scratchPad[LOW_ALARM_TEMP] = alTemp;
         writeScratchPad(deviceAddress, scratchPad);
     }
 }
 
 // returns a char with the current high alarm temperature or
 // DEVICE_DISCONNECTED for an address
-char DallasTemperature::getHighAlarmTemp(const uint8_t* deviceAddress)
+int8_t DallasTemperature::getHighAlarmTemp(const uint8_t* deviceAddress)
 {
     ScratchPad scratchPad;
-    if (isConnected(deviceAddress, scratchPad)) return (char)scratchPad[HIGH_ALARM_TEMP];
+    if (isConnected(deviceAddress, scratchPad))
+      return convertFromAlarmTemp(scratchPad[HIGH_ALARM_TEMP]);
     return DEVICE_DISCONNECTED_C;
 }
 
 // returns a char with the current low alarm temperature or
 // DEVICE_DISCONNECTED for an address
-char DallasTemperature::getLowAlarmTemp(const uint8_t* deviceAddress)
+int8_t DallasTemperature::getLowAlarmTemp(const uint8_t* deviceAddress)
 {
     ScratchPad scratchPad;
-    if (isConnected(deviceAddress, scratchPad)) return (char)scratchPad[LOW_ALARM_TEMP];
+    if (isConnected(deviceAddress, scratchPad))
+      return convertFromAlarmTemp(scratchPad[LOW_ALARM_TEMP]);
     return DEVICE_DISCONNECTED_C;
 }
 
@@ -693,6 +700,18 @@ void DallasTemperature::setAlarmHandler(AlarmHandler *handler)
 // The default alarm handler
 void DallasTemperature::defaultAlarmHandler(const uint8_t* deviceAddress)
 {
+}
+
+// Converts signed byte to dallas 7-bit number and MSB for sign
+uint8_t DallasTemperature::convertToAlarmTemp(int8_t celsius)
+{
+    return (celsius < 0) ? (uint8_t)((celsius * -1) | 128) : (uint8_t)celsius;
+}
+
+// Converts allas 7-bit number and MSB for sign to signed byte
+int8_t DallasTemperature::convertFromAlarmTemp(uint8_t celsius)
+{
+    return (celsius >> 7) ? ((int8_t)(celsius ^ 128)) * -1 : (int8_t)celsius;
 }
 
 #endif
