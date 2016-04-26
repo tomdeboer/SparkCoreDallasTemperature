@@ -205,7 +205,7 @@ class DallasTemperature
 
   // convert from raw to Celsius
   static float rawToCelsius(int16_t);
-  
+
   // convert from raw to Fahrenheit
   static float rawToFahrenheit(int16_t);
 
