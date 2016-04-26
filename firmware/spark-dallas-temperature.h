@@ -130,6 +130,10 @@ class DallasTemperature
   // sends command for one device to perform a temperature conversion by index
   bool requestTemperaturesByIndex(uint8_t);
 
+  // return time for conversion
+  // set to public, useful for async control
+  int16_t millisToWaitForConversion(uint8_t);
+
   // returns temperature raw value (12 bit integer of 1/16 degrees C)
   int16_t getTemp(const uint8_t*);
 
@@ -201,7 +205,7 @@ class DallasTemperature
 
   // convert from raw to Celsius
   static float rawToCelsius(int16_t);
-
+  
   // convert from raw to Fahrenheit
   static float rawToFahrenheit(int16_t);
 
@@ -240,8 +244,6 @@ class DallasTemperature
   // reads scratchpad and returns the raw temperature
   int16_t calculateTemperature(const uint8_t*, uint8_t*);
   
-  int16_t millisToWaitForConversion(uint8_t);
-
   void  blockTillConversionComplete(uint8_t, const uint8_t*);
   
   #if REQUIRESALARMS
