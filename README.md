@@ -9,7 +9,7 @@ Original repository by Miles Burton: [Arduino-Temperature-Control-Library](https
 
 > This library supports the following devices:
 > 
-> 
+> * MAX31850 - New!
 > * DS18B20
 > * DS18S20 - Please note there appears to be an issue with this series.
 > * DS1822
