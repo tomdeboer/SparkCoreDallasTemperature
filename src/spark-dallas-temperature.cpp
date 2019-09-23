@@ -268,9 +268,6 @@ uint8_t DallasTemperature::getResolution(const uint8_t* deviceAddress)
         case TEMP_9_BIT:
             return 9;
         }
-        // special exception for MAX31850
-        if ((scratchPad[CONFIGURATION] & 0xF0) == 0xF0) 
-            return 12;
     }
     return 0;
 }
@@ -443,11 +440,8 @@ int16_t DallasTemperature::calculateTemperature(const uint8_t* deviceAddress, ui
                 ((scratchPad[COUNT_PER_C] - scratchPad[COUNT_REMAIN]) << 7) /
                   scratchPad[COUNT_PER_C]
             );
-            
-    if (deviceAddress[0] == MAX31850MODEL && (scratchPad[0] & 0x1))
-        return NAN;
-    else 
-        return fpTemperature;
+
+    return fpTemperature;
 }
 
 
